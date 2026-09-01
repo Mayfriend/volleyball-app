@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montador de Times VG</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { overflow: hidden; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto; 
+            background: #fff; 
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .screen { display: none; }
+        .screen.active { display: block; }
+        
+        #screen-inicio { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100vh;
+        }
+        
+        .logo-section { 
+            background: linear-gradient(135deg, #E80B8F 0%, #9B5DE5 100%);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        .logo { 
+            width: 140px; 
+            height: 140px; 
+            border-radius: 50%; 
+            background: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25); 
+            flex-shrink: 0;
+            margin-top: 20px;
+        }
+        
+        .logo img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .logo-section h1 { 
+            color: white; 
+            font-size: 32px; 
+            margin: 40px 0 20px 0;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-section .button { 
+            max-width: 320px; 
+            width: 100%; 
+            margin-top: 40px;
+        }
+        
+        #screen-estrategia, #screen-selecao, #screen-resultado { 
+            padding: 20px;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .header { padding: 20px 0; }
+        .header h1 { font-size: 24px; color: #001F5C; margin-bottom: 8px; }
+        .header p { font-size: 14px; color: #666; }
+        .content { flex: 1; padding: 20px 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .button { padding: 12px 20px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; margin-bottom: 12px; width: 100%; }
+        .button.primary { background: #E80B8F; color: white; border: none; padding: 14px 20px; font-size: 16px; font-weight: 600; }
+        
+        .option { border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 12px; cursor: pointer; }
+        .option:hover { border-color: #E80B8F; }
+        .option.selected { border-color: #E80B8F; background: #fdf5fa; }
+        .option h3 { font-size: 16px; color: #001F5C; margin-bottom: 8px; }
+        .option p { font-size: 13px; color: #666; }
+        
+        .jogadora { display: flex; gap: 10px; align-items: center; padding: 10px; background: #f9f9f9; border-radius: 6px; margin-bottom: 8px; }
+        .jogadora input { width: 18px; height: 18px; }
+        .jogadora label { flex: 1; cursor: pointer; font-size: 14px; }
+        
+        .time { border: 2px solid #E80B8F; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+        .time-title { color: #E80B8F; font-weight: 600; font-size: 14px; margin-bottom: 12px; }
+        .player { font-size: 12px; padding: 6px; background: #f9f9f9; margin-bottom: 4px; border-radius: 4px; }
+        
+        .badge { display: inline-block; background: #E80B8F; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; margin-left: 10px; }
+        
+        .controls { 
+            display: flex; 
+            gap: 12px; 
+            margin-top: 20px; 
+            flex-shrink: 0;
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 12px 0;
+            z-index: 100;
+        }
+        .controls .button { flex: 1; margin: 0; }
+        
+        .espera { border: 2px dashed #FFD60A; border-radius: 8px; padding: 16px; margin-top: 12px; }
+        .espera-title { color: #FF9F1C; font-weight: 600; margin-bottom: 10px; }
+        .espera-jogadora { font-size: 13px; padding: 6px 0; color: #001F5C; }
+        
+        @media (max-width: 480px) {
+            .header h1 { font-size: 20px; }
+            .option h3 { font-size: 14px; }
+            .button { font-size: 13px; padding: 11px 16px; }
+            .button.primary { padding: 12px 16px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="screen-inicio" class="screen active">
+        <div class="logo-section">
+            <div class="logo">
+                <img src="logo.jpeg" alt="Logo" onError="this.src='data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23E80B8F%22/&gt;&lt;/svg&gt;'">
+            </div>
+            <div>
+                <h1>Montador de times VG</h1>
+                <button class="button primary" onclick="showScreen('estrategia')">Iniciar partida</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-estrategia" class="screen">
+        <div class="header">
+            <h1>Como montar os times?</h1>
+            <p>Escolha qual estratégia usar</p>
+        </div>
+        <div class="content">
+            <div class="option" onclick="setStrategy('A')">
+                <h3>A - Rodízio</h3>
+                <p>Distribui de melhor em melhor. A melhor atacante vai pro time 1.</p>
+            </div>
+            <div class="option" onclick="setStrategy('B')">
+                <h3>B - Soma Equilibrada</h3>
+                <p>Deixa o total de pontos parecido entre times.</p>
+            </div>
+            <div class="option" onclick="setStrategy('C')">
+                <h3>C - Balanceamento por Posição</h3>
+                <p>Garante que cada time tem uma levantadora boa.</p>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="button" onclick="showScreen('inicio')">Voltar</button>
+            <button class="button primary" onclick="nextScreen()">Próximo</button>
+        </div>
+    </div>
+
+    <div id="screen-selecao" class="screen">
+        <div class="header">
+            <h1>Quem vai jogar?</h1>
+            <p>Marque as jogadoras que pagaram <span class="badge" id="count">0</span></p>
+        </div>
+        <div class="controls" style="margin-bottom: 15px;">
+            <button class="button" onclick="selectAll()">Todas</button>
+            <button class="button" onclick="deselectAll()">Nenhuma</button>
+        </div>
+        <div class="content" id="jogadoras-list"></div>
+        <div class="controls">
+            <button class="button" onclick="showScreen('estrategia')">Voltar</button>
+            <button class="button primary" onclick="buildTeams()">Montar</button>
+        </div>
+    </div>
+
+    <div id="screen-resultado" class="screen">
+        <div class="header">
+            <h1>Times prontos!</h1>
+            <p id="summary"></p>
+        </div>
+        <div class="content" id="teams-list"></div>
+        <div class="controls">
+            <button class="button" onclick="showScreen('selecao')">Voltar</button>
+            <button class="button" onclick="showScreen('inicio')">Nova partida</button>
+        </div>
+    </div>
+
+    <script>
+        const players = [
+            {nome: "Ana Silva", ataque: 5, levantamento: 2, passe: 3},
+            {nome: "Beatriz Costa", ataque: 4, levantamento: 5, passe: 4},
+            {nome: "Camila Santos", ataque: 3, levantamento: 3, passe: 5},
+            {nome: "Diana Oliveira", ataque: 4, levantamento: 2, passe: 3},
+            {nome: "Elisa Ferreira", ataque: 2, levantamento: 4, passe: 4},
+            {nome: "Fernanda Gomes", ataque: 5, levantamento: 1, passe: 2},
+            {nome: "Gabriela Souza", ataque: 3, levantamento: 4, passe: 3},
+            {nome: "Helena Pereira", ataque: 4, levantamento: 3, passe: 5},
+            {nome: "Iris Martins", ataque: 2, levantamento: 2, passe: 4},
+            {nome: "Juliana Ribeiro", ataque: 5, levantamento: 2, passe: 2},
+            {nome: "Karina Alves", ataque: 3, levantamento: 5, passe: 3},
+            {nome: "Laura Mendes", ataque: 4, levantamento: 1, passe: 5},
+            {nome: "Marina Nunes", ataque: 2, levantamento: 3, passe: 4},
+            {nome: "Natalia Barbosa", ataque: 5, levantamento: 3, passe: 2},
+            {nome: "Olivia Carvalho", ataque: 3, levantamento: 4, passe: 4},
+            {nome: "Patricia Dias", ataque: 4, levantamento: 2, passe: 4},
+            {nome: "Quitéria Rocha", ataque: 2, levantamento: 5, passe: 3},
+            {nome: "Rebeca Tavares", ataque: 5, levantamento: 1, passe: 3},
+            {nome: "Sophia Lourenço", ataque: 3, levantamento: 3, passe: 5},
+            {nome: "Tania Evangelista", ataque: 4, levantamento: 4, passe: 2}
+        ];
+
+        let selected = [];
+        let strategy = null;
+
+        function showScreen(name) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + name).classList.add('active');
+            if (name === 'selecao') renderPlayers();
+        }
+
+        function setStrategy(s) {
+            strategy = s;
+            document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+            event.target.closest('.option').classList.add('selected');
+        }
+
+        function nextScreen() {
+            if (!strategy) { alert('Escolha uma estratégia'); return; }
+            showScreen('selecao');
+        }
+
+        function renderPlayers() {
+            const html = players.map((p, i) => `
+                <div class="jogadora">
+                    <input type="checkbox" id="p${i}" onchange="updateCount()">
+                    <label for="p${i}">${p.nome}</label>
+                </div>
+            `).join('');
+            document.getElementById('jogadoras-list').innerHTML = html;
+        }
+
+        function updateCount() {
+            selected = [];
+            document.querySelectorAll('input:checked').forEach(cb => {
+                const i = parseInt(cb.id.substring(1));
+                selected.push(players[i]);
+            });
+            document.getElementById('count').textContent = selected.length;
+        }
+
+        function selectAll() {
+            document.querySelectorAll('input').forEach(cb => cb.checked = true);
+            updateCount();
+        }
+
+        function deselectAll() {
+            document.querySelectorAll('input').forEach(cb => cb.checked = false);
+            updateCount();
+        }
+
+        function getScore(p) { return p.ataque + p.levantamento + p.passe; }
+
+        function buildTeams() {
+            if (selected.length < 4) { alert('Mínimo 4 jogadoras'); return; }
+            const n = Math.floor(selected.length / 4);
+            let teams, benched;
+
+            if (strategy === 'A') {
+                const s = [...selected].sort((a, b) => getScore(b) - getScore(a));
+                teams = Array(n).fill(null).map(() => []);
+                benched = [];
+                s.forEach((p, i) => { if (i < n * 4) teams[i % n].push(p); else benched.push(p); });
+            } else if (strategy === 'B') {
+                const s = [...selected].sort((a, b) => getScore(b) - getScore(a));
+                teams = Array(n).fill(null).map(() => []);
+                benched = [];
+                s.forEach(p => {
+                    const idx = teams.findIndex(t => t.length < 4);
+                    if (idx !== -1) teams[idx].push(p); else benched.push(p);
+                });
+            } else {
+                const st = [...selected].sort((a, b) => b.levantamento - a.levantamento);
+                teams = Array(n).fill(null).map(() => []);
+                benched = [];
+                const used = new Set();
+                for (let i = 0; i < n && i < st.length; i++) { teams[i].push(st[i]); used.add(st[i].nome); }
+                const r = selected.filter(p => !used.has(p.nome)).sort((a, b) => (b.ataque + b.passe) - (a.ataque + a.passe));
+                r.forEach(p => {
+                    const idx = teams.findIndex(t => t.length < 4);
+                    if (idx !== -1) teams[idx].push(p); else benched.push(p);
+                });
+            }
+
+            let html = teams.map((t, i) => {
+                const sc = t.reduce((s, p) => s + getScore(p), 0);
+                const avg = (sc / t.length).toFixed(1);
+                return `<div class="time"><div class="time-title">Time ${i + 1}</div>${t.map(p => `<div class="player"><strong>${p.nome}</strong> - A:${p.ataque} L:${p.levantamento} P:${p.passe}</div>`).join('')}<div style="font-size: 12px; color: #666; margin-top: 8px;">${sc}pts | ${avg}avg</div></div>`;
+            }).join('');
+
+            if (benched.length > 0) {
+                html += `<div class="espera"><div class="espera-title">Na espera (${benched.length})</div>${benched.map(p => `<div class="espera-jogadora">${p.nome}</div>`).join('')}</div>`;
+            }
+
+            document.getElementById('teams-list').innerHTML = html;
+            document.getElementById('summary').textContent = `${teams.length} times de 4${benched.length > 0 ? ' + ' + benched.length + ' na espera' : ''}`;
+            showScreen('resultado');
+        }
+    </script>
+</body>
+</html>
