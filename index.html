@@ -133,33 +133,8 @@
             </div>
             <div>
                 <h1>Montador de times VG</h1>
-                <button class="button primary" onclick="showScreen('estrategia')">Iniciar partida</button>
+                <button class="button primary" onclick="showScreen('selecao')">Iniciar partida</button>
             </div>
-        </div>
-    </div>
-
-    <div id="screen-estrategia" class="screen">
-        <div class="header">
-            <h1>Como montar os times?</h1>
-            <p>Escolha qual estratégia usar</p>
-        </div>
-        <div class="content">
-            <div class="option" onclick="setStrategy('A', this)">
-                <h3>A - Rodízio</h3>
-                <p>Distribui de melhor em melhor. A melhor atacante vai pro time 1.</p>
-            </div>
-            <div class="option" onclick="setStrategy('B', this)">
-                <h3>B - Soma Equilibrada</h3>
-                <p>Deixa o total de pontos parecido entre times.</p>
-            </div>
-            <div class="option" onclick="setStrategy('C', this)">
-                <h3>C - Balanceamento por Posição</h3>
-                <p>Garante que cada time tem uma levantadora boa.</p>
-            </div>
-        </div>
-        <div class="controls">
-            <button class="button" onclick="showScreen('inicio')">Voltar</button>
-            <button class="button primary" onclick="nextScreen()">Próximo</button>
         </div>
     </div>
 
@@ -168,13 +143,16 @@
             <h1>Quem vai jogar?</h1>
             <p>Marque as jogadoras que pagaram <span class="badge" id="count">0</span></p>
         </div>
-        <div class="controls" style="margin-bottom: 15px;">
+        <div style="padding: 20px; padding-bottom: 0;">
+            <input type="text" id="search-input" placeholder="🔍 Buscar jogadora..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" onkeyup="filterPlayers()">
+        </div>
+        <div class="controls" style="margin-bottom: 15px; margin-top: 15px;">
             <button class="button" onclick="selectAll()">Todas</button>
             <button class="button" onclick="deselectAll()">Nenhuma</button>
         </div>
         <div class="content" id="jogadoras-list"></div>
         <div class="controls">
-            <button class="button" onclick="showScreen('estrategia')">Voltar</button>
+            <button class="button" onclick="showScreen('inicio')">Voltar</button>
             <button class="button primary" onclick="buildTeams()">Montar</button>
         </div>
     </div>
@@ -193,64 +171,155 @@
 
     <script>
         const players = [
-            {nome: "Livia", ataque: 4, levantamento: 4, passe: 5},
-            {nome: "Celda", ataque: 5, levantamento: 3, passe: 5},
-            {nome: "Cindy", ataque: 5, levantamento: 3, passe: 5},
-            {nome: "JulianaO", ataque: 5, levantamento: 3, passe: 5},
-            {nome: "Edilene", ataque: 5, levantamento: 3, passe: 5},
-            {nome: "Isadora", ataque: 3, levantamento: 5, passe: 5},
-            {nome: "Rô", ataque: 4, levantamento: 3, passe: 5},
-            {nome: "Luiza", ataque: 4, levantamento: 3, passe: 5},
-            {nome: "Suh", ataque: 5, levantamento: 1, passe: 5},
-            {nome: "Mada", ataque: 3, levantamento: 4, passe: 4},
-            {nome: "Emília", ataque: 4, levantamento: 3, passe: 3},
-            {nome: "Duda", ataque: 4, levantamento: 1, passe: 4},
-            {nome: "Julia Araujo", ataque: 2, levantamento: 3, passe: 4},
-            {nome: "Karen", ataque: 2, levantamento: 4, passe: 3},
-            {nome: "Alê", ataque: 2, levantamento: 4, passe: 3},
-            {nome: "Glicia", ataque: 2, levantamento: 5, passe: 2},
-            {nome: "Clarice", ataque: 3, levantamento: 3, passe: 3},
-            {nome: "Ivi", ataque: 3, levantamento: 1, passe: 4},
-            {nome: "Gio", ataque: 2, levantamento: 3, passe: 3},
-            {nome: "Julia Silva", ataque: 1, levantamento: 1, passe: 5},
-            {nome: "Adriana", ataque: 2, levantamento: 2, passe: 3},
-            {nome: "LarissaEllen", ataque: 2, levantamento: 1, passe: 4},
-            {nome: "Julia Marinho", ataque: 1, levantamento: 0, passe: 5},
-            {nome: "Quézia", ataque: 2, levantamento: 2, passe: 2},
-            {nome: "May", ataque: 2, levantamento: 1, passe: 2},
-            {nome: "Luciana", ataque: 1, levantamento: 1, passe: 2},
-            {nome: "Nath Revoada", ataque: 1, levantamento: 0, passe: 1},
-            {nome: "Diana", ataque: 1, levantamento: 0, passe: 1}
+            {nome: "Adriana Portella", ataque: 0, levantamento: 0, passe: 2},
+            {nome: "Adrya Renara", ataque: 4, levantamento: 0, passe: 0},
+            {nome: "Aimee", ataque: 0, levantamento: 4, passe: 0},
+            {nome: "Alê", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Anna Ketlen", ataque: 0, levantamento: 0, passe: 2},
+            {nome: "Brenda Rebello", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Calíria", ataque: 4, levantamento: 0, passe: 0},
+            {nome: "Celda", ataque: 4, levantamento: 0, passe: 0},
+            {nome: "CINDY", ataque: 5, levantamento: 0, passe: 0},
+            {nome: "Clarice", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Day Fonseca", ataque: 0, levantamento: 0, passe: 2},
+            {nome: "Dhuliana", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Driih", ataque: 0, levantamento: 0, passe: 2},
+            {nome: "Duda", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Edilene Marques", ataque: 4, levantamento: 0, passe: 0},
+            {nome: "Emília", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Erica", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Fabricia", ataque: 0, levantamento: 4, passe: 0},
+            {nome: "Fabricio", ataque: 0, levantamento: 5, passe: 0},
+            {nome: "Fernanda França", ataque: 0, levantamento: 0, passe: 2},
+            {nome: "Fernando", ataque: 0, levantamento: 5, passe: 0},
+            {nome: "Gabi macedo", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Gabriel", ataque: 0, levantamento: 5, passe: 0},
+            {nome: "Geovanna Luiza", ataque: 0, levantamento: 0, passe: 3},
+            {nome: "Gil", ataque: 4, levantamento: 0, passe: 0},
+            {nome: "Giovana Cruz", ataque: 0, levantamento: 0, passe: 0},
+            {nome: "Glicia", ataque: 0, levantamento: 4, passe: 0},
+            {nome: "Graziele Carvalho", ataque: 0, levantamento: 0, passe: 1},
+            {nome: "Hadassa", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Héleny", ataque: 0, levantamento: 0, passe: 3},
+            {nome: "Henrique", ataque: 0, levantamento: 5, passe: 0},
+            {nome: "Iara", ataque: 0, levantamento: 0, passe: 4},
+            {nome: "Isabelle Vasconcelos", ataque: 4, levantamento: 0, passe: 0},
+            {nome: "Isadora", ataque: 0, levantamento: 5, passe: 0},
+            {nome: "Ivi", ataque: 0, levantamento: 0, passe: 3},
+            {nome: "Iza Panda", ataque: 0, levantamento: 0, passe: 3},
+            {nome: "Jane Maria", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Jessica Liandra", ataque: 0, levantamento: 0, passe: 0},
+            {nome: "Joice Lima", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Jonas", ataque: 0, levantamento: 5, passe: 0},
+            {nome: "Jorginho", ataque: 0, levantamento: 5, passe: 0},
+            {nome: "Juh Olaya", ataque: 4, levantamento: 0, passe: 0},
+            {nome: "Júlia Araújo", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Julia Marinho", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Júlia Silva", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Juliana Magalhães", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Karen", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Karine Macedo", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Kariny", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Kelly", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Lana Thayssa", ataque: 0, levantamento: 0, passe: 2},
+            {nome: "Larissa Ellen", ataque: 0, levantamento: 0, passe: 2},
+            {nome: "Lay", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Leticia", ataque: 0, levantamento: 0, passe: 2},
+            {nome: "Ligi", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Lílian", ataque: 0, levantamento: 5, passe: 0},
+            {nome: "Liliane", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Livia", ataque: 0, levantamento: 4, passe: 0},
+            {nome: "Lory", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Luana", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Luciana B", ataque: 0, levantamento: 0, passe: 2},
+            {nome: "Luciany", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Luiza", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Mada", ataque: 4, levantamento: 0, passe: 0},
+            {nome: "Madu", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Manu Fragoso", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Manu que se veste de preto", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "May", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Michelly", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Mika", ataque: 0, levantamento: 0, passe: 3},
+            {nome: "Milly", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Nathallia", ataque: 0, levantamento: 0, passe: 1},
+            {nome: "Nico", ataque: 0, levantamento: 0, passe: 2},
+            {nome: "Patty Soares", ataque: 0, levantamento: 0, passe: 2},
+            {nome: "Paty Miranda", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Quezia", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Ray", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Rayka", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Reh", ataque: 1, levantamento: 0, passe: 0},
+            {nome: "Rô", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Roberta Nara", ataque: 0, levantamento: 0, passe: 3},
+            {nome: "Sabrina", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Sabrina Q", ataque: 0, levantamento: 0, passe: 3},
+            {nome: "Samia", ataque: 0, levantamento: 4, passe: 0},
+            {nome: "Samy Braga", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Sâmylla", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Suh", ataque: 4, levantamento: 0, passe: 0},
+            {nome: "Tati", ataque: 0, levantamento: 0, passe: 5},
+            {nome: "Tayssa Moura", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Teffy", ataque: 0, levantamento: 4, passe: 0},
+            {nome: "Vanessa", ataque: 2, levantamento: 0, passe: 0},
+            {nome: "Victor Castro", ataque: 0, levantamento: 5, passe: 0},
+            {nome: "Victor Edilene", ataque: 0, levantamento: 5, passe: 0},
+            {nome: "Vini", ataque: 0, levantamento: 5, passe: 0},
+            {nome: "Vitória", ataque: 3, levantamento: 0, passe: 0},
+            {nome: "Yane Viller", ataque: 0, levantamento: 0, passe: 1},
+            {nome: "Yasmin", ataque: 2, levantamento: 0, passe: 0}
         ];
 
         let selected = [];
-        let strategy = null;
 
         function showScreen(name) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('screen-' + name).classList.add('active');
-            if (name === 'selecao') renderPlayers();
-        }
-
-        function setStrategy(s, el) {
-            strategy = s;
-            document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-            if (el) el.classList.add('selected');
-        }
-
-        function nextScreen() {
-            if (!strategy) { alert('Escolha uma estratégia'); return; }
-            showScreen('selecao');
+            if (name === 'selecao') {
+                renderPlayers();
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) searchInput.value = '';
+            }
         }
 
         function renderPlayers() {
-            const html = players.map((p, i) => `
-                <div class="jogadora">
-                    <input type="checkbox" id="p${i}" onchange="updateCount()">
-                    <label for="p${i}">${p.nome}</label>
-                </div>
-            `).join('');
+            const html = players.map((p, i) => {
+                const isChecked = selected.some(s => s.nome === p.nome) ? 'checked' : '';
+                return `
+                    <div class="jogadora">
+                        <input type="checkbox" id="p${i}" onchange="updateCount()" ${isChecked}>
+                        <label for="p${i}">${p.nome}</label>
+                    </div>
+                `;
+            }).join('');
             document.getElementById('jogadoras-list').innerHTML = html;
+        }
+
+        function filterPlayers() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const jogadorasList = document.getElementById('jogadoras-list');
+            
+            if (searchTerm === '') {
+                // Se campo vazio, mostra todos
+                renderPlayers();
+                return;
+            }
+
+            const filtered = players
+                .map((p, i) => ({ player: p, index: i }))
+                .filter(item => item.player.nome.toLowerCase().includes(searchTerm));
+
+            const html = filtered.map(item => {
+                const isChecked = selected.some(s => s.nome === item.player.nome) ? 'checked' : '';
+                return `
+                    <div class="jogadora">
+                        <input type="checkbox" id="p${item.index}" onchange="updateCount()" ${isChecked}>
+                        <label for="p${item.index}">${item.player.nome}</label>
+                    </div>
+                `;
+            }).join('');
+
+            jogadorasList.innerHTML = html || '<p style="padding: 20px; color: #999; text-align: center;">Nenhuma jogadora encontrada</p>';
         }
 
         function updateCount() {
@@ -272,57 +341,88 @@
             updateCount();
         }
 
-        function getScore(p) { return p.ataque + p.levantamento + p.passe; }
+        function getCategoria(p) {
+            if (p.levantamento === 5 || p.levantamento === 4) return 'Levantador';
+            if (p.ataque === 5 || p.ataque === 4) return 'Ataque1';
+            if (p.ataque === 3 || p.ataque === 2) return 'Ataque2';
+            if (p.passe === 5 || p.passe === 4 || p.passe === 3 || p.passe === 2) return 'Passe';
+            return 'Outro';
+        }
 
         function buildTeams() {
             if (selected.length < 4) { alert('Mínimo 4 jogadoras'); return; }
-            const n = Math.floor(selected.length / 4);
-            let teams, benched;
 
-            if (strategy === 'A') {
-                const s = [...selected].sort((a, b) => getScore(b) - getScore(a));
-                teams = Array(n).fill(null).map(() => []);
-                benched = [];
-                s.forEach((p, i) => { if (i < n * 4) teams[i % n].push(p); else benched.push(p); });
-            } else if (strategy === 'B') {
-                const s = [...selected].sort((a, b) => getScore(b) - getScore(a));
-                teams = Array(n).fill(null).map(() => []);
-                benched = [];
-                s.forEach(p => {
-                    const teamsWithSpace = teams.map((t, i) => ({ idx: i, score: t.reduce((sum, pl) => sum + getScore(pl), 0) })).filter(t => teams[t.idx].length < 4);
-                    if (teamsWithSpace.length > 0) {
-                        teamsWithSpace.sort((a, b) => a.score - b.score);
-                        teams[teamsWithSpace[0].idx].push(p);
-                    } else {
-                        benched.push(p);
-                    }
-                });
-            } else {
-                const st = [...selected].sort((a, b) => b.levantamento - a.levantamento);
-                teams = Array(n).fill(null).map(() => []);
-                benched = [];
-                const used = new Set();
-                for (let i = 0; i < n && i < st.length; i++) { teams[i].push(st[i]); used.add(st[i].nome); }
-                const r = selected.filter(p => !used.has(p.nome)).sort((a, b) => (b.ataque + b.passe) - (a.ataque + a.passe));
-                r.forEach(p => {
-                    const idx = teams.findIndex(t => t.length < 4);
-                    if (idx !== -1) teams[idx].push(p); else benched.push(p);
-                });
+            const levantadores = selected.filter(p => getCategoria(p) === 'Levantador');
+            const ataque1 = selected.filter(p => getCategoria(p) === 'Ataque1');
+            const ataque2 = selected.filter(p => getCategoria(p) === 'Ataque2');
+            const passes = selected.filter(p => getCategoria(p) === 'Passe');
+
+            // PRIORIDADE: 1L obrigatório = número de times
+            let numTimes = levantadores.length;
+
+            if (numTimes === 0) {
+                alert('❌ Precisa de levantadores!');
+                return;
             }
 
-            // Alerta se sobrar jogadoras
-            if (benched.length > 0) {
-                alert(`⚠️ ${benched.length} jogadora(s) ficarão na espera.\nNúmero total: ${selected.length}\nTimes montados: ${teams.length} de 4`);
+            let teams = [];
+            let lIdx = 0, a1Idx = 0, a2Idx = 0, pIdx = 0;
+
+            // PASSO 1: Montar os N times com PRIORIDADE absoluta
+            // Estrutura: 1L + 2A (A1 > A2) + 1P (quando tiver)
+            for (let i = 0; i < numTimes; i++) {
+                let time = [];
+                
+                // 1. LEVANTADOR (obrigatório)
+                time.push(levantadores[lIdx++]);
+                
+                // 2. PRIMEIRO ATAQUE (prioriza A1)
+                if (a1Idx < ataque1.length) {
+                    time.push(ataque1[a1Idx++]);
+                } else {
+                    time.push(ataque2[a2Idx++]);
+                }
+                
+                // 3. SEGUNDO ATAQUE (usa A2, depois sobra A1)
+                if (a2Idx < ataque2.length) {
+                    time.push(ataque2[a2Idx++]);
+                } else if (a1Idx < ataque1.length) {
+                    time.push(ataque1[a1Idx++]);
+                }
+                
+                // 4. PASSE (quando tiver)
+                if (pIdx < passes.length) {
+                    time.push(passes[pIdx++]);
+                }
+                
+                teams.push(time);
             }
+
+            // PASSO 2: Distribuir A2 extras no time sem Passe (o último que vai ter menos P)
+            // Encontra qual time ficou sem Passe
+            let timesSemPasse = teams.map((t, i) => ({ idx: i, tamanho: t.length }))
+                                      .filter(x => x.tamanho === 3);
+            
+            if (timesSemPasse.length > 0) {
+                let timeSemPasseIdx = timesSemPasse[0].idx;
+                // Adiciona A2 extras a esse time
+                while (a2Idx < ataque2.length) {
+                    teams[timeSemPasseIdx].push(ataque2[a2Idx++]);
+                }
+            }
+
+            // Verificar se ficou alguém de fora (não deveria, mas por segurança)
+            const usados = new Set();
+            teams.forEach(t => t.forEach(p => usados.add(p.nome)));
+            const benched = selected.filter(p => !usados.has(p.nome));
 
             let html = teams.map((t, i) => {
-                const sc = t.reduce((s, p) => s + getScore(p), 0);
-                const avg = (sc / t.length).toFixed(1);
-                return `<div class="time"><div class="time-title">Time ${i + 1}</div>${t.map(p => `<div class="player"><strong>${p.nome}</strong> - A:${p.ataque} L:${p.levantamento} P:${p.passe}</div>`).join('')}<div style="font-size: 12px; color: #666; margin-top: 8px;">Total de Habilidade: ${sc} | Média do Time: ${avg}</div></div>`;
+                return `<div class="time"><div class="time-title">Time ${i + 1} (${t.length})</div>${t.map(p => `<div class="player"><strong>${p.nome}</strong> (${getCategoria(p)}) - A:${p.ataque} L:${p.levantamento} P:${p.passe}</div>`).join('')}</div>`;
             }).join('');
 
             if (benched.length > 0) {
-                html += `<div class="espera"><div class="espera-title">Na espera (${benched.length})</div>${benched.map(p => `<div class="espera-jogadora">${p.nome}</div>`).join('')}</div>`;
+                html += `<div class="espera"><div class="espera-title">Na espera (${benched.length})</div>${benched.map(p => `<div class="espera-jogadora">${p.nome} (${getCategoria(p)})</div>`).join('')}</div>`;
+                alert(`⚠️ ${benched.length} jogadora(s) na espera.\nTotal: ${selected.length} | Times: ${teams.length}`);
             }
 
             document.getElementById('teams-list').innerHTML = html;
